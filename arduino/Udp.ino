@@ -29,6 +29,8 @@ unsigned int localPort = 8888;  // local port to listen on
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE + 1];  // buffer to hold incoming packet,
 char ReplyBuffer[] = "acknowledged\r\n";        // a string to send back
 
+int sensorPin = A0;   // select the input pin for the potentiometer
+
 WiFiUDP Udp;
 
 void blink() {
@@ -58,8 +60,14 @@ void setup() {
 }
 
 void loop() {
+
+  sensorValue = analogRead(sensorPin);
+  delay(1000);
+  Serial.println(sensorValue);
+
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
+  
   if (packetSize) {
     Serial.printf("Received packet of size %d from %s:%d\n    (to %s:%d, free heap = %d B)\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort(), Udp.destinationIP().toString().c_str(), Udp.localPort(), ESP.getFreeHeap());
 
